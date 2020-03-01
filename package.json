@@ -1,6 +1,6 @@
 {
   "name": "cf-worker-deploy",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "dependencies": {
     "fs-extra": "^8.1.0",
     "node-fetch": "^2.6.0"

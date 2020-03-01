@@ -6,16 +6,6 @@
 
 ## Usage
 
-Create `secrets.json` and `worker.js` first.
-See the *Running* section below.
-
-```javascript
-const deploy = require('cf-worker-deploy');
-await deploy();
-```
-
-## Running
-
 Create `secrets.json` and `worker.js` first:
 
 `secrets.json`:
@@ -49,13 +39,34 @@ async function handleRequest(request) {
 }
 ```
 
-With these prerequisites met, run using `node .`.
+With these prerequisites met, use as follows:
+
+```javascript
+const deploy = require('cf-worker-deploy');
+
+// Deploys the contents of `worker.js` according to the keys of `secrets.json`
+await deploy();
+```
 
 ## Testing
 
-See *Running*.
+**This will replace your existing worker at the configured secrets!**
+
+You must also add a new secret key value pair: `userName` which is used as a
+subdomain to construct the worker URL for the test:
+
+`https://${workerName}.${userName}.workers.dev`
+
+`npm test`
 
 ## Changelog
+
+### `3.0.0` 2020-03-01
+
+Dropped support for passing in the secrets using command line arguments and
+exported the method correctly.
+
+Added a destructive (!) test for verifying the deployment works.
 
 ### `2.0.0` 2020-03-01
 
