@@ -23,7 +23,7 @@ void async function () {
 
   // Go to https://dash.cloudflare.com/${accountId}/workers/edit/${workerName}
   // and find the `vses2` cookie value in the browser developer tools
-  const sessionCookie = secrets.sessionCookie || process.argv[4];
+  const sessionCookie = secrets.sessionCookie || process.argv[5];
   if (!sessionCookie) {
     throw new Error('Session cookie must be supplied in the sessionCookie key of secrets.json or in the 4th command line argument.');
   }
@@ -34,9 +34,15 @@ void async function () {
 
   const script = await fs.readFile('worker.js', { encoding: 'utf8' });
 
+  const namespaceId = secrets.namespaceId || process.argv[6];
+  const bindingName = secrets.bindingName || process.argv[7];
+  if (namespaceId && !bindingName) {
+    throw new Error('The binding name must be provided since the namespace ID is provided.');
+  }
+
   const metadata = {
     body_part: 'script',
-    bindings: [],
+    bindings: namespaceId ? [{ name: bindingName, type: 'kv_namespace', namespace_id: namespaceId }] : [],
   };
 
   const boundary = crypto.randomBytes(20).toString('hex');
