@@ -6,7 +6,14 @@
 
 ## Usage
 
-Create `secrets.json` and `worker.js` first:
+```javascript
+const deploy = require('cf-worker-deploy');
+await deploy(accountId, workerName, accessToken, sessionCookie, script, namespaceId, bindingName);
+```
+
+## Testing
+
+**This will replace your existing worker at the configured secrets!**
 
 `secrets.json`:
 ```json
@@ -16,7 +23,8 @@ Create `secrets.json` and `worker.js` first:
   "accessToken": "…-ATOK…",
   "sessionCookie": "…",
   "namespaceId": "…",
-  "bindingName": "…"
+  "bindingName": "…",
+  "userName": "…"
 }
 ```
 
@@ -28,38 +36,17 @@ Create `secrets.json` and `worker.js` first:
   (optional if you're not binding a KV to your worker)
 - `bindingName` is the name of the variable binding your worker will see fo the KV
   (mandatory if the namespace ID is provided)
-
-`worker.js`:
-```javascript
-// Your worker code, e.g.:
-addEventListener('fetch', event => event.respondWith(handleRequest(event.request)));
-
-async function handleRequest(request) {
-  return new Response('hello world', { status: 200 });
-}
-```
-
-With these prerequisites met, use as follows:
-
-```javascript
-const deploy = require('cf-worker-deploy');
-
-// Deploys the contents of `worker.js` according to the keys of `secrets.json`
-await deploy();
-```
-
-## Testing
-
-**This will replace your existing worker at the configured secrets!**
-
-You must also add a new secret key value pair: `userName` which is used as a
-subdomain to construct the worker URL for the test:
-
-`https://${workerName}.${userName}.workers.dev`
+- `userName` is used as a subdomain to construct the worker URL for the test:
+  `https://${workerName}.${userName}.workers.dev`
 
 `npm test`
 
 ## Changelog
+
+### `4.0.0` 2020-03-01
+
+Accept all the secrets and the script using function arguments instead of doing
+file I/O in the method. This gives greated flexibility to the callers.
 
 ### `3.0.0` 2020-03-01
 

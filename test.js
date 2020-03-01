@@ -1,20 +1,49 @@
-const fs = require('fs-extra');
+const secrets = require('./secrets.json');
 const deploy = require('.');
 const fetch = require('node-fetch');
-const secrets = require('./secrets.json');
 
 void async function () {
+  // Find in https://dash.cloudflare.com/ (on load appended to the URL)
+  const accountId = secrets.accountId;
+  if (!accountId) {
+    throw new Error('Account ID must be supplied in the accountId key of secrets.json.');
+  }
+
+  const workerName = secrets.workerName;
+  if (!workerName) {
+    throw new Error('Worker name must be supplied in the workerName key of secrets.json.');
+  }
+
+  // Find in dashboard network requests' X-ATOK HTTP request headers in the dev tools
+  const accessToken = secrets.accessToken;
+  if (!accessToken) {
+    throw new Error('Access token must be supplied in the accessToken key of secrets.json.');
+  }
+
+  // Go to https://dash.cloudflare.com/${accountId}/workers/edit/${workerName}
+  // and find the `vses2` cookie value in the browser developer tools
+  const sessionCookie = secrets.sessionCookie;
+  if (!sessionCookie) {
+    throw new Error('Session cookie must be supplied in the sessionCookie key of secrets.json.');
+  }
+
+  const namespaceId = secrets.namespaceId;
+  const bindingName = secrets.bindingName;
+  if (namespaceId && !bindingName) {
+    throw new Error('The binding name must be provided since the namespace ID is provided.');
+  }
+
   const nonce = Math.random();
 
-  await fs.writeFile('worker.js', `
+  const script = `
 addEventListener('fetch', event => event.respondWith(handleRequest(event.request)));
 
 async function handleRequest(request) {
   return new Response('hello world ${nonce}', { status: 200 });
 }
-`);
+`;
 
-  await deploy();
+  await deploy(accountId, workerName, accessToken, sessionCookie, script, namespaceId, bindingName);
 
   const attempts = 10;
   console.log('Nonce', nonce);
