@@ -6,10 +6,11 @@
 
 ## Usage
 
+Create `secrets.json` and `worker.js` first.
+See the *Running* section below.
+
 ```javascript
 const deploy = require('cf-worker-deploy');
-
-// Create secrets.json and worker.js - see the Running section of this readme
 await deploy();
 ```
 
@@ -19,14 +20,18 @@ Create `secrets.json` and `worker.js` first:
 
 `secrets.json`:
 ```json
-// See the code comments in `index.js` for guidance on how to obtain these values
 {
   "accountId": "…",
   "workerName": "…",
   "accessToken": "…-ATOK…",
-  "sessionCookie": "…" // Without the `vses2=` prefix
+  "sessionCookie": "…"
 }
 ```
+
+- `accountId` is the account ID displayed in your CloudFlare dashboard UI and URL
+- `workerName` is the name of you worker - `https://${workerName}.${userName}.workers.dev`
+- `accessToken` is the `X-ATOK` request header value found using the dev tools
+- `sessionCookie` is the `vses2` cookie value found using the dev tools
 
 `worker.js`:
 ```javascript
@@ -38,7 +43,7 @@ async function handleRequest(request) {
 }
 ```
 
-`node .`
+With these prerequisites met, run using `node .`.
 
 ## Testing
 
