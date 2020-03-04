@@ -8,8 +8,10 @@
 
 ```javascript
 const deploy = require('cf-worker-deploy');
-await deploy(accountId, workerName, accessToken, sessionCookie, script, namespaceId, bindingName);
+await deploy(accountId, workerName, apiToken, script, ...bindings);
 ```
+
+For argument values, see the Testing section below.
 
 ## Testing
 
@@ -20,28 +22,34 @@ await deploy(accountId, workerName, accessToken, sessionCookie, script, namespac
 {
   "accountId": "…",
   "workerName": "…",
-  "accessToken": "…-ATOK…",
-  "sessionCookie": "…",
-  "namespaceId": "…",
-  "bindingName": "…",
+  "apiToken": "…",
+  "bindings": [
+    {
+      "name": "…",
+      "namespaceId": "…"
+    }
+  ],
   "userName": "…"
 }
 ```
 
-- `accountId` is the account ID displayed in your CloudFlare dashboard UI and URL
-- `workerName` is the name of you worker - `https://${workerName}.${userName}.workers.dev`
-- `accessToken` is the `X-ATOK` request header value found using the dev tools
-- `sessionCookie` is the `vses2` cookie value found using the dev tools
-- `namespaceId` is the KV namespace ID found in your KV tab in the CF dashboard
-  (optional if you're not binding a KV to your worker)
-- `bindingName` is the name of the variable binding your worker will see fo the KV
-  (mandatory if the namespace ID is provided)
-- `userName` is used as a subdomain to construct the worker URL for the test:
-  `https://${workerName}.${userName}.workers.dev`
+- `accountId` is the account ID from https://dash.cloudflare.com/${accountId}/workers/overview
+- `workerName` is the name of you worker in `https://${workerName}.${userName}.workers.dev`
+- `apiToken` is the API token from https://dash.cloudflare.com/${accountId}/profile/api-tokens
+- `bindings` is an array of associated worker resources (zero or more):
+  - `name` is the name of the variable binding in the worker script source code
+  - `namespaceId` is the namespace ID from https://dash.cloudflare.com/${accountId}/workers/kv/namespaces
+- `userName` is used as a subdomain in `https://${workerName}.${userName}.workers.dev`
 
 `npm test`
 
 ## Changelog
+
+### `5.0.0` 2020-03-04
+
+Rewritten to use the CloudFlare API:
+
+https://developers.cloudflare.com/workers/tooling/api/scripts
 
 ### `4.0.0` 2020-03-01
 
