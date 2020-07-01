@@ -2,7 +2,7 @@
 
 ## Installation
 
-`npm install https://github.com/TomasHubelbauer/cf-workers-deploy`
+`npm install TomasHubelbauer/cf-workers-deploy`
 
 ## Usage
 
